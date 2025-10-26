@@ -16,7 +16,9 @@ connectDB()
 
 // cấu hình CORS
 app.use(cors({
-  origin: "*" //tất cả tên miền được phép truy cập 
+  origin: "http://localhost:3000", // chỉ định tên miền cụ thể mới nhận được cookie
+  // "*" //tất cả tên miền được phép truy cập 
+  credentials: true, // cho phép gửi cookie
 }))
 
 app.use(express.json()) // cho phép gửi dữ liệu dạng json
