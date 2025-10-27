@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import * as userController from "./controller/user.controller"
 import routes from './routes/index.route'
 import { connectDB } from "./config/database.config"
+import cookieParser from "cookie-parser"
 
 const app = express()
 const port = 4000;
@@ -22,6 +23,9 @@ app.use(cors({
 }))
 
 app.use(express.json()) // cho phép gửi dữ liệu dạng json
+
+// Cấu hình lấy cookie parser
+app.use(cookieParser())
 
 app.use("/", routes)
 
