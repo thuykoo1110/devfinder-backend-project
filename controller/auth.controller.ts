@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import AccountUser from "../models/account-user.model";
+import AccountCompany from "../models/account-company.model";
 
 export const check = async (req: Request, res: Response) => {
   try{
@@ -17,34 +18,56 @@ export const check = async (req: Request, res: Response) => {
     var decoded = jwt.verify(token, `${process.env.JWT_SECRET}`) as jwt.JwtPayload;  // do typescript nên ép kiểu
 
     const { id, email } = decoded;
-
-    const existAccount = await AccountUser.findOne({
+    
+    // tìm user 
+    const existAccountUser = await AccountUser.findOne({
       _id: id,
       email: email
     })
 
-    if(!existAccount){
-      res.clearCookie("token");
+    if(existAccountUser){
+      const infoUser = {
+        id: existAccountUser.id,
+        fullName: existAccountUser.fullName,
+        email: existAccountUser.email
+      };
+
       res.json({
-        code: "error",
-        message: "Token không hợp lệ!"
-      });
+        code: "success",
+        message: "Token hợp lệ!",
+        infoUser: infoUser
+      })
+      return;
+    }
+    // tìm company
+    const existAccountCompany = await AccountCompany.findOne({
+      _id: id,
+      email: email
+    })
+
+    if(existAccountCompany){
+      const infoCompany = {
+        id: existAccountCompany.id,
+        companyName: existAccountCompany.companyName,
+        email: existAccountCompany.email
+      };
+
+      res.json({
+        code: "success",
+        message: "Token hợp lệ!",
+        infoCompany: infoCompany
+      })
       return;
     }
 
-    res.locals.account = existAccount; // trả cho frontend thông tin tài khoản
-
-    const infoUser = {
-      id: existAccount.id,
-      fullName: existAccount.fullName,
-      email: existAccount.email
-    };
-
-    res.json({
-      code: "success",
-      message: "Token hợp lệ!",
-      infoUser: infoUser
-    })
+    if(!existAccountCompany&&!existAccountUser){
+      res.clearCookie("token");
+      res.json({
+        code: "success",
+        message: "Token hợp lệ!"
+      })
+      return;
+    }
   } catch(error){
     res.clearCookie("token");
     res.json({
