@@ -1,7 +1,11 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import * as userController from "./controller/user.controller"
+
+
+// Load biến môi trường từ .env
+dotenv.config()
+
 import routes from './routes/index.route'
 import { connectDB } from "./config/database.config"
 import cookieParser from "cookie-parser"
@@ -9,8 +13,6 @@ import cookieParser from "cookie-parser"
 const app = express()
 const port = 4000;
 
-// Load biến môi trường từ .env
-dotenv.config()
 
 // Connet DB
 connectDB()
