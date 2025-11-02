@@ -44,14 +44,23 @@ export const check = async (req: Request, res: Response) => {
     // tìm company
     const existAccountCompany = await AccountCompany.findOne({
       _id: id,
-      email: email
+      email: email,
     })
 
     if(existAccountCompany){
       const infoCompany = {
         id: existAccountCompany.id,
         companyName: existAccountCompany.companyName,
-        email: existAccountCompany.email
+        email: existAccountCompany.email,
+        address: existAccountCompany.address,
+        companyModel: existAccountCompany.companyModel,
+        companyEmployees: existAccountCompany.companyEmployees,
+        workingTime: existAccountCompany.workingTime,
+        workOvertime: existAccountCompany.workOvertime,
+        phone: existAccountCompany.phone,
+        description: existAccountCompany.description,
+        logo: existAccountCompany.logo,
+        city: existAccountCompany.city,
       };
 
       res.json({
