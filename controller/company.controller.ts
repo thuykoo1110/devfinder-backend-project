@@ -1,9 +1,10 @@
 import { Request, Response } from "express"
 import AccountCompany from "../models/account-company.model"
-import bcrypt from "bcryptjs"
+import bcrypt, { compareSync } from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { AccountRequest } from "../interface/request.interface"
 import Job from "../models/jobs.model"
+import { title } from "process"
 
 export const registerPost = async(req: Request, res: Response) => {
   const existAccount = await AccountCompany.findOne({
@@ -120,6 +121,49 @@ export const createJobPost = async(req: AccountRequest, res: Response) => {
       message: "Tạo công việc thành công!"
     })
   }catch(error){
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
+}
+
+export const listJob = async (req: AccountRequest, res: Response) => {
+  try {
+    const companyId = req.account.id;
+
+    const jobs = await Job
+      .find({
+        companyId: companyId
+      })
+      .sort({
+        createdAt: "desc"
+      })
+
+    const dataFinal = [];
+
+    for (const item of jobs) {
+      dataFinal.push({
+        id: item.id,
+        companyLogo: req.account.logo,
+        title: item.title,
+        companyName: req.account.companyName,
+        salaryMin: item.salaryMin,
+        salaryMax: item.salaryMax,
+        position: item.position,
+        workingForm: item.workingForm,
+        companyCity: req.account.companyCity,
+        technologies: item.technologies,
+      });
+    }
+    
+    res.json({
+      code: "success",
+      message: "Thành công!",
+      jobs: dataFinal
+    })
+  } catch (error) {
+    console.log(error);
     res.json({
       code: "error",
       message: "Dữ liệu không hợp lệ!"
